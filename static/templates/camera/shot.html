@@ -1,57 +1,57 @@
 {% extends 'base.html' %}
 {% block head %}
-  <style>
-  canvas, video{
+<style>
+canvas, video{
     border: 1px solid gray;
-  }
-  </style>
+}
+</style>
 {% endblock %}
 {% block content %}
 {% load static %}
 
 <body>
 
-<h1>撮影</h1>
+    <h1>撮影</h1>
 
-<video id="camera" width="300" height="200" autoplay playsinline></video>
-<canvas id="picture" width="300" height="200"></canvas>
-<form>
-  <button type="button" id="shutter">シャッター</button>
-</form>
+    <video id="camera" autoplay playsinline></video>
+    <canvas id="picture"></canvas>
+    <form>
+        <button type="button" id="shutter">シャッター</button>
+    </form>
 
 
-<script>
-window.onload = () => {
-  const video  = document.querySelector("#camera");
-  const canvas = document.querySelector("#picture");
+    <script>
+        window.onload = () => {
+            const video  = document.querySelector("#camera");
+            const canvas = document.querySelector("#picture");
 
-  /** カメラ設定 */
-  const constraints = {
-    audio: false,
-    video: {
-      width: 300,
-      height: 200,
-      facingMode: "user"
-    }
-  };
+            /** カメラ設定 */
+            const constraints = {
+                audio: false,
+                video: {
+                    facingMode: "user"
+                }
+            };
 
-  navigator.mediaDevices.getUserMedia(constraints)
-  .then( (stream) => {
-    video.srcObject = stream;
-    video.onloadedmetadata = (e) => {
-      video.play();
-    };
-  })
-  .catch( (err) => {
-    console.log(err.name + ": " + err.message);
-  });
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then( (stream) => {
+                    video.srcObject = stream;
+                    video.onloadedmetadata = (e) => {
+                        video.play();
 
-   document.querySelector("#shutter").addEventListener("click", () => {
-    const ctx = canvas.getContext("2d");
+                    };
+                })
+                .catch( (err) => {
+                    console.log(err.name + ": " + err.message);
+                });
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  });
-};
-</script>
+            document.querySelector("#shutter").addEventListener("click", () => {
+                const ctx = canvas.getContext("2d");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            });
+        };
+    </script>
 </body>
 {% endblock %}
